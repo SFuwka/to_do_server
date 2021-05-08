@@ -9,6 +9,9 @@ const taskSchema = new mongoose.Schema({
         required: true,
         ref: 'Project'
     },
+    bgColor: {
+        type: String
+    },
     finished: {
         type: Boolean,
         default: false

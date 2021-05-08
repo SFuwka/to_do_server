@@ -1,7 +1,7 @@
 const User = require('../../../models/User')
 
 const login = async (req, res) => {
-    const { email, password } = req.body
+    const { email, password, rememberMe } = req.body
     if (!email) {
         return res.status(400).json({ message: 'empty email', errType: 'email' })
     }
@@ -21,10 +21,19 @@ const login = async (req, res) => {
     }
     if (user.status != "Active") {
         return res.status(401).send({
-            message: "Pending Account. Please Verify Your Email!",
+            errType: 'pendingAccount',
+            message: "Please verify your Email!",
         });
     }
-    req.session.user = user
+
+    req.session.user = user._id
+    console.log(rememberMe, 'AAAAA')
+    if (!rememberMe) {
+        req.session.cookie.maxAge = 30 * 60 * 1000 //30min
+    } else {
+        req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000 //7 days
+    }
+
     res.json({
         name: user.name, surname: user.surname, gender: user.gender,
         birthday: user.birthday, country: user.country, city: user.city,

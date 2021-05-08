@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    nickName: {
+    alias: {
         type: String,
         required: true
     },
@@ -37,9 +37,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    status: {
-        type: String,
-        maxlength: 300
+    projectsLimit: {
+        type: Number,
+        default: 20
+    },
+    projectsCount: {
+        type: Number,
+        default: 0
     },
     status: {
         type: String,

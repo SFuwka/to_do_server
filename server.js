@@ -38,16 +38,17 @@ toDo.once('open', () => console.log('Connected to mongo'))
 app.use(session({
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
-    resave: true,
+    resave: false,
     cookie: {
+        //secure: true, //when HTTPS
         path: '/',
         sameSite: false,
-        maxAge: 7 * 24 * 60 * 60 * 1000 //7 days
+        //maxAge: 7 * 24 * 60 * 60 * 1000 //7 days
     },
     store: MongoStore.create({
         mongoUrl: process.env.DATABASE_URL,
         collection: 'sessions',
-        ttl: 7 * 24 * 60 * 60,
+        //ttl: 7 * 24 * 60 * 60,
     })
 }))
 

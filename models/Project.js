@@ -9,8 +9,15 @@ const projectSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
-    privateSettings:{  //can be: private(noone can see), public(everyone can see), array of id (collection of users can see), 
+    color: {
+        type: String,
+    },
+    privacySettings:{  //can be: private(noone can see), public(everyone can see), array of id (collection of users can see), 
         type: [String] //public-registered (only registered users can see)
+    },
+    category:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category'
     },
     avatar: {
         type: String
@@ -21,4 +28,4 @@ const projectSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('project', projectSchema)
+module.exports = mongoose.model('Project', projectSchema)

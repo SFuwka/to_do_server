@@ -1,3 +1,6 @@
+const Task = require('../../../models/Task')
+
+
 const getTasks = (req, res) => {
     res.send('Array of tasks')
 }
