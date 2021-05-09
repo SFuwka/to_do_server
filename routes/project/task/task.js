@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const router = Router()
+const router = Router({ mergeParams: true })
 const { getTasks, getTask, createTask, updateTask, deleteTask } = require('./taskControll')
 
 

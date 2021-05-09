@@ -2,7 +2,7 @@ const User = require('../../models/User')
 const Project = require('../../models/Project')
 const Category = require('../../models/Category')
 
-const getProjects = async (req, res) => {
+const getProjects = async (req, res, next) => {
     let count = Number(req.query.count) || 20
     let page = Number(req.query.page) || 1
     if (count > 20) count = 20
@@ -13,20 +13,24 @@ const getProjects = async (req, res) => {
             .skip((page - 1) * count)
             .limit(count)
         if (projects.length) {
-            return res.status(200).json({ projects })
+            req.projects = projects
+            req.projectOwner = projects[0].user.toString()
+            return next()
         }
-        return res.status(204).json({ test: 0, message: 'no projects' })
+        return res.status(204).json({ message: 'no projects' })
     } catch (error) {
         console.log(error)
     }
 }
 
-const getProject = async (req, res) => {
+const getProject = async (req, res, next) => {
     try {
         const project = await Project.findById(req.params.projectId)
-        return res.status(200).json({ project })
+        req.projectOwner = project.user.toString()
+        req.project = project
+        return next() //res.status(200).json({ project })
     } catch (error) {
-        console.log(err)
+        console.log(error)
         return res.status(500)
     }
 }
@@ -64,7 +68,7 @@ const createProject = async (req, res) => {
         await newProject.save()
         return res.status(201).json({ message: 'project created', project: newProject, category: projectCategory })
     } catch (error) {
-        return res.status(400).json({ errType: 'common', message: 'Something went wrong when trying to save' })
+        return res.status(500).json({ errType: 'common', message: 'Something went wrong when trying to save' })
     }
 }
 
@@ -86,5 +90,12 @@ const deleteProject = async (req, res) => {
     }
 }
 
+const sendProjects = (req, res) => {
+    return res.status(200).json({ projects: req.projects })
+}
 
-module.exports = { getProjects, getProject, updateProject, createProject, deleteProject }
+const sendProject = (req, res) => {
+    return res.status(200).json({ project: req.project })
+}
+
+module.exports = { getProjects, getProject, updateProject, createProject, deleteProject, sendProjects, sendProject }

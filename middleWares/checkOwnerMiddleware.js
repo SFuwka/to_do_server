@@ -1,11 +1,11 @@
 const checkOwner = (req, res, next) => {
-    console.log(req.params, req.session.user)
-    if (req.params.userId !== req.session.user) {
-
-    } else {
-        //ToDo
+    if (!req.projectOwner) return next('no project owner')
+    if (req.projectOwner === req.session.user) {
+        req.projectOwner = 'self'
+        return next()
     }
-    next()
+    req.projectOwner = 'notSelf'
+    return next()
 }
 
 module.exports = checkOwner

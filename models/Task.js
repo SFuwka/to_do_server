@@ -9,7 +9,10 @@ const taskSchema = new mongoose.Schema({
         required: true,
         ref: 'Project'
     },
-    bgColor: {
+    dateToFinish: {
+        type: Date
+    },
+    color: {
         type: String
     },
     finished: {
@@ -23,4 +26,4 @@ const taskSchema = new mongoose.Schema({
 })
 
 
-module.exports = mongoose.model('project', taskSchema)
+module.exports = mongoose.model('task', taskSchema)
