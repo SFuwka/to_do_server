@@ -1,7 +1,23 @@
 const Task = require('../../../models/Task')
 
 
-const getTasks = (req, res) => {
+const getTasks = async (req, res) => {
+    const projectId = req.params.projectId
+    let count = Number(req.query.count) || 20
+    let page = Number(req.query.page) || 1
+    if (count > 20) count = 20
+    try {
+        const tasks = await Task.find({ project: projectId })
+            .sort({ editDate: -1 })
+            .skip((page - 1) * count)
+            .limit(count)
+        if (tasks.length > 0) {
+            return res.status(200).json({ tasks })
+        }
+        return res.status(204).json({ message: 'no tasks yet' })
+    } catch (error) {
+        console.log(error)
+    }
     res.send('Array of tasks')
 }
 
@@ -16,7 +32,7 @@ const createTask = async (req, res) => {
     if (!projectId) return res.status(400).json({ message: 'projectId is required' })
     if (!taskName) return res.status(400).json({ errType: 'field', message: 'task name is required' })
 
-    const newTask = new Task({ project: req.params.projectId, task: taskName, color })
+    const newTask = new Task({ project: req.params.projectId, taskName, color })
     try {
         await newTask.save()
         return res.status(201).json({ task: newTask, message: 'taskCreated' })

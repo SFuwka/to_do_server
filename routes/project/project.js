@@ -9,12 +9,10 @@ const tasksRouter = require('./task/task')
 //router.use(checkOwner)
 router.get('/', getProjects, checkOwner, checkPrivacySettings, sendProjects) //checkPrivacySettings, sendProjects
 router.get('/:projectId', getProject, checkOwner, checkSingleProjectPrivacySettings, sendProject)
+router.use('/:projectId/tasks', tasksRouter)
 router.use(checkAuth)
 router.post('/', createProject)
 router.put('/:projectId', updateProject)
 router.delete('/:projectId', deleteProject)
-router.use('/:projectId/tasks', tasksRouter)
-
-
 
 module.exports = router

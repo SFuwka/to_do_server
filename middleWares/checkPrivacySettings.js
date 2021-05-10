@@ -20,8 +20,8 @@ const checkSingleProjectPrivacySettings = (req, res, next) => {
         }
         //toDo array of users
     }
-    return res.status(403).json({message: 'project is open for registered users only'})
-    
+    return res.status(403).json({ message: 'project is open for registered users only' })
+
 }
 
 module.exports = { checkPrivacySettings, checkSingleProjectPrivacySettings }

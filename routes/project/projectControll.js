@@ -9,7 +9,7 @@ const getProjects = async (req, res, next) => {
     const user = req.params.userId ? req.params.userId : req.session.user
     try {
         const projects = await Project.find({ user }) //privacySettings: { $ne: 'private' }
-            .sort({ editDate: -1 })
+            .sort({ editDate: -1 }) //toDO take sort params from query?
             .skip((page - 1) * count)
             .limit(count)
         if (projects.length) {
