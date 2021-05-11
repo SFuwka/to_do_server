@@ -1,4 +1,5 @@
 const User = require('../../models/User')
+const Task = require('../../models/Task')
 const Project = require('../../models/Project')
 const Category = require('../../models/Category')
 

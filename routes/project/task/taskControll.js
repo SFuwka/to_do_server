@@ -45,8 +45,18 @@ const updateTask = (req, res) => {
     res.send('update task')
 }
 
-const deleteTask = (req, res) => {
-    res.send('task delete')
+const deleteTask = async (req, res) => {
+    const taskId = req.params.id
+    try {
+        const { deletedCount } = await Task.deleteOne({ _id: taskId })
+        if (deletedCount > 0) {
+            return res.status(204).send()
+        }
+        return res.send('nothing to delete')
+    } catch (error) {
+        console.log(error)
+        return res.status(500)
+    }
 }
 
 
