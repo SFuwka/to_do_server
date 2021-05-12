@@ -82,6 +82,7 @@ const deleteProject = async (req, res) => {
     try {
         const { deletedCount } = await Project.deleteOne({ _id: projectId })
         if (deletedCount > 0) {
+            await Task.deleteMany({ project: projectId })
             return res.status(204).send()
         }
         return res.send('nothing to delete')
