@@ -17,8 +17,8 @@ const getTasks = async (req, res) => {
         return res.status(204).json({ message: 'no tasks yet' })
     } catch (error) {
         console.log(error)
+        return res.status(500).json({ message: 'Something went wrong' })
     }
-    res.send('Array of tasks')
 }
 
 const getTask = (req, res) => {
@@ -41,7 +41,15 @@ const createTask = async (req, res) => {
     }
 }
 
-const updateTask = (req, res) => {
+const updateTask = async (req, res) => {
+    const taskId = req.body._id
+    try {
+        await Task.updateOne({ _id: taskId }, req.body)
+        return res.status(200).json({ task: req.body })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Something went wrong' })
+    }
     res.send('update task')
 }
 
