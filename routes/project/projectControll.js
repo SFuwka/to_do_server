@@ -73,8 +73,21 @@ const createProject = async (req, res) => {
     }
 }
 
-const updateProject = (req, res) => {
-    res.send('update project')
+const updateProject = async (req, res) => {
+    const projectId = req.body._id
+    const project = req.body
+    if (!req.body.category) {
+        project.category = await categoryHandler('default')
+    } else {
+        project.category = await categoryHandler(req.body.category)
+    }
+    try {
+        await Project.updateOne({ _id: projectId }, project)
+        return res.status(200).json({ project })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Something went wrong' })
+    }
 }
 
 const deleteProject = async (req, res) => {
