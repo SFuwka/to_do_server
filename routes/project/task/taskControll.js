@@ -21,6 +21,18 @@ const getTasks = async (req, res) => {
     }
 }
 
+const updateStatus = async (req, res) => {
+    const { status } = req.body
+    const taskId = req.params.id
+    try {
+        await Task.updateOne({ _id: taskId }, { $set: { finished: status } })
+        return res.status(200).json({ message: 'task complete status changed' })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'update task complete status error' })
+    }
+}
+
 const getTask = (req, res) => {
     res.send('task with id')
 }
@@ -67,4 +79,4 @@ const deleteTask = async (req, res) => {
 }
 
 
-module.exports = { getTasks, getTask, updateTask, createTask, deleteTask }
+module.exports = { getTasks, getTask, updateTask, createTask, deleteTask, updateStatus }

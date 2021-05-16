@@ -12,12 +12,15 @@ const projectSchema = new mongoose.Schema({
     color: {
         type: String,
     },
-    privacySettings:{  //can be: private(noone can see), public(everyone can see), array of id (collection of users can see), 
+    privacySettings: {  //can be: private(noone can see), public(everyone can see), array of id (collection of users can see), 
         type: [String] //public-registered (only registered users can see)
     },
-    category:{
+    category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
+    },
+    categoryName: {
+        type: String,
     },
     avatar: {
         type: String
