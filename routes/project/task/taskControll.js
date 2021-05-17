@@ -40,7 +40,6 @@ const getTask = (req, res) => {
 const createTask = async (req, res) => {
     const { taskName, color } = req.body
     const projectId = req.params.projectId
-
     if (!projectId) return res.status(400).json({ message: 'projectId is required' })
     if (!taskName) return res.status(400).json({ errType: 'field', message: 'task name is required' })
 
