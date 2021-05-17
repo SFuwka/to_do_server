@@ -67,6 +67,7 @@ const createProject = async (req, res) => {
             newProject.category = projectCategory
         }
         await newProject.save()
+        await User.updateOne({ _id: req.session.user }, { $inc: { projectsCount: 1 } })
         return res.status(201).json({ message: 'project created', project: newProject, category: projectCategory })
     } catch (error) {
         return res.status(500).json({ errType: 'common', message: 'Something went wrong when trying to save' })
@@ -96,6 +97,7 @@ const deleteProject = async (req, res) => {
         const { deletedCount } = await Project.deleteOne({ _id: projectId })
         if (deletedCount > 0) {
             await Task.deleteMany({ project: projectId })
+            await User.updateOne({ _id: req.session.user }, { $inc: { projectsCount: -1 } })
             return res.status(204).send()
         }
         return res.send('nothing to delete')

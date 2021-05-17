@@ -1,4 +1,23 @@
+const User = require('../../models/User')
 
+const getMyProfile = async (req, res) => {
+    try {
+        const profile = await User.findById(req.session.user)
+        const response = {
+            alias: profile.alias,
+            name: profile.name,
+            surname: profile.surname,
+            projectsCount: profile.projectsCount,
+            projectsLimit: profile.projectsLimit,
+            email: profile.email,
+            _id: profile._id,
+        }
+        return res.json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Something went wrong' })
+    }
+}
 
 const getUsers = (req, res) => {
     res.send('Array of users')
@@ -17,4 +36,4 @@ const deleteUser = (req, res) => {
 }
 
 
-module.exports = { getUsers, getUser, updateUser, deleteUser }
+module.exports = { getMyProfile, getUsers, getUser, updateUser, deleteUser }

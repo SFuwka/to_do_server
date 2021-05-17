@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     },
     projectsLimit: {
         type: Number,
-        default: 20
+        default: 5
     },
     projectsCount: {
         type: Number,
