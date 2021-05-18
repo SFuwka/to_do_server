@@ -17,7 +17,7 @@ const getTasks = async (req, res) => {
         return res.status(204).json({ message: 'no tasks yet' })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ message: 'Something went wrong' })
+        return res.status(500).json({ message: 'getTasks error' })
     }
 }
 
@@ -59,7 +59,7 @@ const updateTask = async (req, res) => {
         return res.status(200).json({ task: req.body })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ message: 'Something went wrong' })
+        return res.status(500).json({ message: 'update task error' })
     }
 }
 
