@@ -30,7 +30,6 @@ const getUser = async (req, res) => {
     let response = {}
     try {
         const user = await User.findById(userId, { alias: 1, creationDate: 1, projectsCount: 1 })
-        console.log(user)
         if (!user) return res.status(404).json({ message: `no User with id: ${userId}` })
         response.user = user
         //TO_DO privacy handle
