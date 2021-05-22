@@ -3,33 +3,40 @@ const Task = require('../../models/Task')
 const Project = require('../../models/Project')
 const Category = require('../../models/Category')
 
+
+
 const getProjects = async (req, res, next) => {
     let count = Number(req.query.count) || 20
     let page = Number(req.query.page) || 1
+    console.log(req.notAllowedPrivacyLayer, 'allowed privacy')
     if (count > 20) count = 20
-    const user = req.params.userId ? req.params.userId : req.session.user
     try {
-        const projects = await Project.find({ user }) //privacySettings: { $ne: 'private' }
+        const projects = await Project.find({ user: req.user, privacySettings: { $nin: req.notAllowedPrivacyLayer } }) //
             .sort({ editDate: -1 }) //toDO take sort params from query?
             .skip((page - 1) * count)
             .limit(count)
         if (projects.length) {
             req.projects = projects
-            req.projectOwner = projects[0].user.toString()
             return next()
         }
-        return res.status(204).json({ message: 'no projects' })
+        return res.status(204).json({ message: 'no projects or projects have some privacy' })
     } catch (error) {
         console.log(error)
     }
 }
 
 const getProject = async (req, res, next) => {
+    console.log(req.notAllowedPrivacyLayer, 'not allowed privacy')
+    console.log(req.params.projectId, 'aaaaa')
     try {
         const project = await Project.findById(req.params.projectId)
-        req.projectOwner = project.user.toString()
+        if (req.notAllowedPrivacyLayer
+            && req.notAllowedPrivacyLayer.includes(project.privacySettings[0])
+            || project.privacySettings[0] === 'private') {
+            return res.status(403).json({ message: `project is ${project.privacySettings[0]}` })
+        }
         req.project = project
-        return next() //res.status(200).json({ project })
+        return next()
     } catch (error) {
         console.log(error)
         return res.status(500)

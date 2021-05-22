@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const { handleSearch } = require('./searchControll')
-const router = Router()
+const router = Router({ mergeParams: true })
 
 router.get('/', handleSearch)
 

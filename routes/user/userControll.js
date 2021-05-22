@@ -33,7 +33,7 @@ const getUser = async (req, res) => {
         if (!user) return res.status(404).json({ message: `no User with id: ${userId}` })
         response.user = user
         //TO_DO privacy handle
-        const projects = await Project.find({ user: userId, privacySettings: { $ne: 'private' } })
+        const projects = await Project.find({ user: userId, privacySettings: { $nin: req.notAllowedPrivacyLayer } })
         if (projects) response.projects = projects
         return res.json(response)
     } catch (error) {
