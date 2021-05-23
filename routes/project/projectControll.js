@@ -8,7 +8,6 @@ const Category = require('../../models/Category')
 const getProjects = async (req, res, next) => {
     let count = Number(req.query.count) || 20
     let page = Number(req.query.page) || 1
-    console.log(req.notAllowedPrivacyLayer, 'allowed privacy')
     if (count > 20) count = 20
     try {
         const projects = await Project.find({ user: req.user, privacySettings: { $nin: req.notAllowedPrivacyLayer } }) //
@@ -26,8 +25,6 @@ const getProjects = async (req, res, next) => {
 }
 
 const getProject = async (req, res, next) => {
-    console.log(req.notAllowedPrivacyLayer, 'not allowed privacy')
-    console.log(req.params.projectId, 'aaaaa')
     try {
         const project = await Project.findById(req.params.projectId)
         if (req.notAllowedPrivacyLayer

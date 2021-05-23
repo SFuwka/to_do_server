@@ -24,6 +24,7 @@ const handleSearch = async (req, res) => {
 
             let resCount = 0
             const projectIds = projects.map(project => project._id)
+            const projectsWithIdAndName = projects.map(project => ({ _id: project._id, name: project.projectName }))
             response.projects = projects.filter(project => {
                 if (resCount >= SEARCH_LIMIT) return
                 if (project.projectName.match(regex)) {
@@ -33,7 +34,13 @@ const handleSearch = async (req, res) => {
             })
             if (response.projects.length < SEARCH_LIMIT) {
                 const tasks = await Task.find({ project: { $in: projectIds }, taskName: { $regex: regex } }).limit(SEARCH_LIMIT - resCount)
-                response.tasks = tasks
+                const tasksWithProjectName = tasks.map(task => {
+                    const project = projectsWithIdAndName.find(project => {
+                        return project._id.toString() === task.project.toString()
+                    })
+                    return { ...task._doc, projectName: project.name }
+                })
+                response.tasks = tasksWithProjectName
             }
             return res.json(response)
         case 'task':
