@@ -7,12 +7,14 @@ const getTasks = async (req, res) => {
     let page = Number(req.query.page) || 1
     if (count > 20) count = 20
     try {
+        const tasksCount = await Task.countDocuments({ project: projectId })
+        console.log(tasksCount)
         const tasks = await Task.find({ project: projectId })
             .sort({ editDate: -1 })
             .skip((page - 1) * count)
             .limit(count)
         if (tasks.length > 0) {
-            return res.status(200).json({ tasks })
+            return res.status(200).json({ tasks, tasksCount })
         }
         return res.status(204).json({ message: 'no tasks yet' })
     } catch (error) {
