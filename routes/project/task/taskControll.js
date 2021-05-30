@@ -3,12 +3,10 @@ const Task = require('../../../models/Task')
 
 const getTasks = async (req, res) => {
     const projectId = req.params.projectId
-    let count = Number(req.query.count) || 20
+    let count = 20
     let page = Number(req.query.page) || 1
-    if (count > 20) count = 20
     try {
         const tasksCount = await Task.countDocuments({ project: projectId })
-        console.log(tasksCount)
         const tasks = await Task.find({ project: projectId })
             .sort({ editDate: -1 })
             .skip((page - 1) * count)
