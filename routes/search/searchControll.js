@@ -8,8 +8,8 @@ const SEARCH_LIMIT = 5
 
 const handleSearch = async (req, res) => {
     const { userId } = req.params
-    const { pattern, where } = req.query
-    const regex = new RegExp(pattern, 'gi')
+    const { text, where } = req.query
+    const regex = new RegExp(text, 'gi')
     let response = {}
     switch (where) {
         case 'users':
@@ -43,7 +43,7 @@ const handleSearch = async (req, res) => {
                 response.tasks = tasksWithProjectName
             }
             return res.json(response)
-        case 'task':
+        case 'tasks':
             console.log('task')
 
     }
