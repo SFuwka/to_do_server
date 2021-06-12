@@ -4,12 +4,12 @@ const Task = require('../../../models/Task')
 const getTasks = async (req, res) => {
     const projectId = req.params.projectId
     let count = 20
-    let page = Number(req.query.page) || 1
+    let skip = Number(req.query.skip) || 0
     try {
         const tasksCount = await Task.countDocuments({ project: projectId })
         const tasks = await Task.find({ project: projectId })
             .sort({ editDate: -1 })
-            .skip((page - 1) * count)
+            .skip(skip)
             .limit(count)
         if (tasks.length > 0) {
             return res.status(200).json({ tasks, tasksCount })
