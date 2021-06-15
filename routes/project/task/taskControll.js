@@ -8,7 +8,7 @@ const getTasks = async (req, res) => {
     try {
         const tasksCount = await Task.countDocuments({ project: projectId })
         const tasks = await Task.find({ project: projectId })
-            .sort({ editDate: -1 })
+            .sort({ order: 1 })
             .skip(skip)
             .limit(count)
         if (tasks.length > 0) {
@@ -33,6 +33,30 @@ const updateStatus = async (req, res) => {
     }
 }
 
+const updateOrder = async (req, res) => {
+    const { projectId } = req.params
+    const order = req.body
+    console.log(order)
+    try {
+        let updated = await Task.findOneAndUpdate(
+            { project: projectId, order: order.prev },
+            { $set: { order: order.new } },
+            { useFindAndModify: false }
+        )
+        if (order.prev > order.new) {
+            await Task.updateMany({ project: projectId, _id: { $ne: updated._id }, order: { $lt: order.prev, $gt: order.new - 1 } },
+                { $inc: { order: 1 } })
+        } else {
+            await Task.updateMany({ project: projectId, _id: { $ne: updated._id }, order: { $lt: order.new + 1, $gt: order.prev } },
+                { $inc: { order: -1 } })
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+    res.json('tut')
+}
+
 const getTask = (req, res) => {
     res.send('task with id')
 }
@@ -42,8 +66,9 @@ const createTask = async (req, res) => {
     const projectId = req.params.projectId
     if (!projectId) return res.status(400).json({ message: 'projectId is required' })
     if (!taskName) return res.status(400).json({ errType: 'field', message: 'task name is required' })
+    let projectTasks = await Task.find({ project: req.params.projectId })
 
-    const newTask = new Task({ project: req.params.projectId, taskName, color })
+    const newTask = new Task({ project: req.params.projectId, taskName, color, order: projectTasks.length })
     try {
         await newTask.save()
         return res.status(201).json({ task: newTask, message: 'taskCreated' })
@@ -78,4 +103,4 @@ const deleteTask = async (req, res) => {
 }
 
 
-module.exports = { getTasks, getTask, updateTask, createTask, deleteTask, updateStatus }
+module.exports = { getTasks, getTask, updateTask, createTask, deleteTask, updateStatus, updateOrder }

@@ -22,6 +22,9 @@ const taskSchema = new mongoose.Schema({
     editDate: {
         type: Date,
         default: Date.now
+    },
+    order: {
+        type: Number
     }
 })
 

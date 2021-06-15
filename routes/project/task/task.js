@@ -1,13 +1,14 @@
 const { Router } = require('express')
 const checkAuth = require('../../../middleWares/checkAuthMiddleware')
 const router = Router({ mergeParams: true })
-const { getTasks, getTask, createTask, updateTask, deleteTask, updateStatus } = require('./taskControll')
+const { getTasks, getTask, createTask, updateTask, deleteTask, updateStatus, updateOrder } = require('./taskControll')
 
 
 router.get('/', getTasks)
 router.get('/:id', getTask)
 router.use(checkAuth)
 router.post('/', createTask)
+router.put('/updateOrder', updateOrder)
 router.put('/:id/status', updateStatus)
 router.put('/:id', updateTask)
 router.delete('/:id', deleteTask)
