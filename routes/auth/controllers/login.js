@@ -1,14 +1,13 @@
 const User = require('../../../models/User')
+const jwt = require('jsonwebtoken')
+const { sendForgotPasswordEmail } = require('../../../utils/mailer')
+const { use } = require('../../project/project')
 
 const login = async (req, res) => {
     const { email, password, rememberMe } = req.body
-    if (!email) {
-        return res.status(400).json({ message: 'empty email', errType: 'email' })
-    }
 
-    if (!password) {
-        return res.status(400).json({ message: 'empty password', errType: 'password' })
-    }
+    if (!email) return res.status(400).json({ message: 'empty email', errType: 'email' })
+    if (!password) return res.status(400).json({ message: 'empty password', errType: 'password' })
 
     const user = await User.findOne({ email })
     if (!user) {
@@ -41,6 +40,19 @@ const login = async (req, res) => {
     })
 }
 
+const forgotPassword = async (req, res) => {
+    const { email } = req.body
+    if (!email) return res.status(400).json({ message: 'empty email', errType: 'email' })
+
+    const user = await User.findOne({ email })
+    if (!user) return res.status(400).json({ message: 'user with this email does not exist', errType: 'email' })
+
+    const token = jwt.sign({ email }, process.env.MAILER_SECRET)
+    await User.updateOne({ email }, { $set: { resetPasswordCode: token } })
+
+    sendForgotPasswordEmail(email, user.name, token)
+}
+
 const logout = (req, res) => {
     req.session.destroy(err => {
         if (err) {
@@ -50,4 +62,4 @@ const logout = (req, res) => {
     res.status(204).send()
 }
 
-module.exports = { login, logout }
+module.exports = { login, logout, forgotPassword }

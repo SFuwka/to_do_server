@@ -1,7 +1,6 @@
 const { Router } = require('express')
-const { authMe } = require('./controllers/authMe')
+const { authMe, forgotPassword } = require('./controllers/authMe')
 const router = Router()
-
 
 router.get('/', authMe)
 

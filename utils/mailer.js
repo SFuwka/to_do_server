@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const { forgotPassword } = require("../routes/auth/controllers/login");
 
 
 const user = process.env.MAILER_USER;
@@ -27,5 +28,19 @@ const sendConfirmationEmail = (name, email, confirmationCode) => {
     }).catch(err => console.log(err));
 };
 
+const sendForgotPasswordEmail = (email, name, forgotPasswordCode) => {
+    transport.sendMail({
+        from: user,
+        to: email,
+        subject: "Reset password",
+        html: `<h1>Reset password</h1>
+        <h2>Hello ${name}</h2>
+        <div>
+        <p>To reset your password please click on the following link</p>
+        <a href=${process.env.SERVER_URL}/api/login/confirmReset/${forgotPasswordCode}> Click here</a>
+        </div>`,
+    }).catch(err => console.log(err))
+}
 
-module.exports = sendConfirmationEmail
+
+module.exports = { sendConfirmationEmail, sendForgotPasswordEmail }

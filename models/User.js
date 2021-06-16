@@ -54,6 +54,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true
     },
+    resetPasswordCode: {
+        type: String,
+        unique: true
+    },
     creationDate: {
         type: Date,
         default: Date.now

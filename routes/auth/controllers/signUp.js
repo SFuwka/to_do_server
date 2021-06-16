@@ -1,6 +1,6 @@
 const User = require('../../../models/User')
 const jwt = require('jsonwebtoken')
-const sendConfirmationEmail = require('../../../utils/mailer')
+const { sendConfirmationEmail } = require('../../../utils/mailer')
 
 
 const signUp = async (req, res) => {
