@@ -8,7 +8,7 @@ const getTasks = async (req, res) => {
     try {
         const tasksCount = await Task.countDocuments({ project: projectId })
         const tasks = await Task.find({ project: projectId })
-            .sort({ order: 1 })
+            .sort({ order: -1 })
             .skip(skip)
             .limit(count)
         if (tasks.length > 0) {
@@ -38,6 +38,11 @@ const updateOrder = async (req, res) => {
     const order = req.body
     console.log(order)
     try {
+        //handle reversed order
+        let projectTasks = await Task.find({ project: projectId })
+        order.new = Math.abs(order.new - projectTasks.length + 1)
+        order.prev = Math.abs(order.prev - projectTasks.length + 1)
+
         let updated = await Task.findOneAndUpdate(
             { project: projectId, order: order.prev },
             { $set: { order: order.new } },
@@ -91,8 +96,9 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
     const taskId = req.params.id
     try {
-        const { deletedCount } = await Task.deleteOne({ _id: taskId })
-        if (deletedCount > 0) {
+        const deleted = await Task.findByIdAndDelete(taskId)
+        if (deleted) {
+            await Task.updateMany({ project: deleted.project, order: { $gt: deleted.order } }, { $inc: { order: -1 } })
             return res.status(204).send()
         }
         return res.send('nothing to delete')
