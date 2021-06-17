@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordCode: {
         type: String,
-        unique: true
+        unique: true,
     },
     creationDate: {
         type: Date,
@@ -70,7 +70,6 @@ userSchema.methods.hashPassword = function (password) {
 }
 userSchema.methods.comparePasswords = async function (password) {
     const isMatch = await bcrypt.compare(password, this.password)
-    console.log(isMatch, 'COMPARE')
     return isMatch
 }
 

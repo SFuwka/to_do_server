@@ -1,7 +1,6 @@
 const User = require('../../../models/User')
 const jwt = require('jsonwebtoken')
 const { sendForgotPasswordEmail } = require('../../../utils/mailer')
-const { use } = require('../../project/project')
 
 const login = async (req, res) => {
     const { email, password, rememberMe } = req.body
@@ -49,8 +48,37 @@ const forgotPassword = async (req, res) => {
 
     const token = jwt.sign({ email }, process.env.MAILER_SECRET)
     await User.updateOne({ email }, { $set: { resetPasswordCode: token } })
+    try {
+        sendForgotPasswordEmail(email, user.name, token)
+    } catch (error) {
+        return res.status(500).json({ message: 'something went wrong when trying to send email' })
+    }
 
-    sendForgotPasswordEmail(email, user.name, token)
+    res.json({ message: 'check your email to continue' })
+}
+
+const redirectToResetPasswordForm = async (req, res) => {
+    const user = await User.findOne({ resetPasswordCode: req.params.code })
+    if (user && !user.resetPasswordCode) return res.status(403).send()
+    if (user) return res.redirect(`${process.env.CLIENT_URL}/resetPassword/${user.resetPasswordCode}`)
+    return res.status(404).send()
+}
+
+const resetPassword = async (req, res) => {
+    const { password, resetCode } = req.body
+    if (!password || !resetCode) return res.status(400).json({ message: 'you must provide valid password and reset code' })
+    const user = await User.findOne({ resetPasswordCode: resetCode })
+    if (user) {
+        const hashedPassword = await user.hashPassword(password)
+        try {
+            await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword, resetPasswordCode: null } })
+            return res.json('password changed')
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({ message: 'something went wrong when trying to change password' })
+        }
+    }
+
 }
 
 const logout = (req, res) => {
@@ -62,4 +90,4 @@ const logout = (req, res) => {
     res.status(204).send()
 }
 
-module.exports = { login, logout, forgotPassword }
+module.exports = { login, logout, forgotPassword, redirectToResetPasswordForm, resetPassword }
